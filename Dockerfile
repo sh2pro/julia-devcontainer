@@ -28,6 +28,18 @@ RUN apt-get update \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
 
+RUN RUN wget https://julialang-s3.julialang.org/bin/linux/x64/1.8/julia-1.8.4-linux-x86_64.tar.gz && \
+    tar -xvzf julia-1.8.4-linux-x86_64.tar.gz && \
+    mv julia-1.8.4 /usr/lib/ && \
+    ln -s /usr/lib/julia-1.8.4/bin/julia /usr/bin/julia && \
+    rm julia-1.8.4-linux-x86_64.tar.gz && \
+    julia -e "using Pkg;Pkg.add([\"IJulia\", \"Plots\" ])" && \
+    julia -e "using Pkg;Pkg.add([\"ModelingToolkit\", \"ModelingToolkitStandardLibrary\"])" && \
+    julia -e "using Pkg;Pkg.add([\"DifferentialEquations\", \"OrdinaryDiffEq\", \"Unitful\"])" && \
+    julia -e "using Pkg;Pkg.add([\"DiffEqFlux\", \"DataDrivenDiffEq\", \"StatsPlots\", \"PlotlyJS\"])" && \
+    julia -e "using Pkg;Pkg.add([\"CSV\", \"DataFrame\", \"Conda\",  \"PyCall\"])" && \
+    julia -e "using Conda; Conda.pip_interop(true); Conda.pip(\"install\", \"webio_jupyter_extension\")"
+
 RUN mkdir -p /julia-devcontainer-scripts
 
 COPY ./postcreate.jl /julia-devcontainer-scripts
